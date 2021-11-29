@@ -16,7 +16,7 @@ First, create a developer account at [Agora.io](https://dashboard.agora.io/signi
 - Step 1: Download the RTC SDK. After decompressing, copy the *.jar and *.so from agora_sdk_java (for RTC) the lib/ of this project.
 - Step 2: Install the dependency jar package which demo required into maven local repo, use maven commands:
 mvn install:install-file -Dfile=lib/agora_rtc.jar -DgroupId=io.agora.rtc  -DartifactId=agora-rtc-sdk -Dversion=1.0 -Dpackaging=jar
-mvn install:install-file -Dfile=lib/commons-cli-1.4.jar -DgroupId=io.agora.commons-cli -DartifactId=commons-cli -Dversion=1.4 -Dpackaging=ja
+mvn install:install-file -Dfile=lib/commons-cli-1.4.jar -DgroupId=io.agora.commons-cli -DartifactId=commons-cli -Dversion=1.4 -Dpackaging=jar
 -step 3: copy source code:
  1. copy directory common from example_java to src/main/java/io/ and SampleReceiveYuvPcm.java  src/main/java/io/agora/
  2. modify the from line of SampleReceiveYuvPcm.java to be: package io.agora.mainClass;
