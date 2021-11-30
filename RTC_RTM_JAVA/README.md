@@ -8,11 +8,17 @@ With this sample app, you can:
 - join RTC channel
 - register PcmFrameObserver
 - save remote users'audio frames to a local file received_audio.pcm
-- login to RTM
-- p2p chat to remote RTM user
+- Login RTM server
+- Send and receive point to point message online
+- Join channel
+- Send and receive channel message
+- Get channel member list
+- Leave channel
+- Logout RTM server
 
-## prerequisite for Running the App
+## Prerequisite for Running the App
 First, create a developer account at [Agora.io](https://dashboard.agora.io/signin/), and obtain an App ID.
+Update APPID.APP_ID of RtmJavaDemo.java in src/main/java/io/rtm/ with your App ID
 
 ## Integration mode
 - Step 1: Download the RTC SDK. After decompressing, copy the *.jar and *.so from agora_sdk_java (for RTC) the lib/ of this project.
