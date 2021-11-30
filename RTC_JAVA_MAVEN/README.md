@@ -17,12 +17,8 @@ First, create a developer account at [Agora.io](https://dashboard.agora.io/signi
 - Step 2: Install the dependency jar package which demo required into maven local repo, use maven commands:
 mvn install:install-file -Dfile=lib/agora_rtc.jar -DgroupId=io.agora.rtc  -DartifactId=agora-rtc-sdk -Dversion=1.0 -Dpackaging=jar
 mvn install:install-file -Dfile=lib/commons-cli-1.4.jar -DgroupId=io.agora.commons-cli -DartifactId=commons-cli -Dversion=1.4 -Dpackaging=jar
--step 3: copy source code:
- 1. copy directory common from example_java to src/main/java/io/ and SampleReceiveYuvPcm.java  src/main/java/io/agora/
- 2. modify the from line of SampleReceiveYuvPcm.java to be: package io.agora.mainClass;
-
-- Step 4: Compile and pack the project to *.jar, use "mvn package" under the directory where pom.xml locates. It may take some time to generate the package.
-- Step 5: Run the demo， use 
+- Step 3: Compile and pack the project to *.jar, use "mvn package" under the directory where pom.xml locates. It may take some time to generate the package.
+- Step 4: Run the demo， use 
 java -cp target/SampleReceiveYuvPcm-1.0-SNAPSHOT.jar -Dsun.boot.library.path=lib/ io.agora.mainClass.SampleReceiveYuvPcm -channelId your-channelid -token your-token(or App ID) 
 
 ## Parameters
