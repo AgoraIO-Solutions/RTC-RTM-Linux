@@ -31,7 +31,7 @@ mvn install:install-file -Dfile=lib/agora_rtm.jar -DgroupId=io.agora.rtm  -Darti
 - Step 4: run this command once: export LD_LIBRARY_PATH=./lib Run the demo，use
 java -cp target/SampleReceiveYuvPcm-1.0-SNAPSHOT.jar -Dsun.boot.library.path=lib/ io.agora.mainClass.SampleReceiveYuvPcm -channelId your-channelid -token your-token(or App ID) [-remmoteUserId xxx]
 
-^C or ^Z to terminate
+^C to terminate
 
 ## Parameters
 * **--token ：** user specific AppId or token, no default value, required

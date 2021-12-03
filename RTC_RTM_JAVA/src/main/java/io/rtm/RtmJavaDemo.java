@@ -22,6 +22,7 @@ import io.agora.rtm.RtmChannelAttribute;
 
 class APPID {
     public static final String APP_ID = "";
+    public static final String TOKEN = "";
 }
 
 class ChannelListener implements RtmChannelListener {
@@ -144,7 +145,7 @@ public class RtmJavaDemo {
             System.out.println("Invalid userID detected!");
             return false;
         }
-        mRtmClient.login(null, userId, new ResultCallback<Void>() {
+        mRtmClient.login(APPID.TOKEN, userId, new ResultCallback<Void>() {
             //@Override
             public void onSuccess(Void responseInfo) {
                 loginStatus = true;

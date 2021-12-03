@@ -234,7 +234,7 @@ public class SampleReceiveYuvPcm {
         @Override
         public int onPlaybackAudioFrame(AgoraLocalUser agora_local_user, AudioFrame audioFrame) {
 	    long localts = audioFrame.getRenderTimeMs();
-            if ((frameNum_++ & 0xffff) == 0) {
+            if ((frameNum_++ & 0xff) == 0) {
 		System.out.println(" QConPlaybackAudioFrame frame number:" + frameNum_);
 	        //rtmClient_.p2pChat(remoteUserId);
 		//System.out.format(" time: %d%n", localts);
