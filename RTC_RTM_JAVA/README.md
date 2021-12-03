@@ -18,20 +18,20 @@ With this sample app, you can:
 
 ## Prerequisite for Running the App
 First, create a developer account at [Agora.io](https://dashboard.agora.io/signin/), and obtain an App ID.
-Update APPID.APP_ID of RtmJavaDemo.java in src/main/java/io/rtm/ with your App ID
+Update APPID.APP_ID of RtmJavaDemo.java in src/main/java/io/rtm/ with your App ID and token
 
 ## Integration mode
-- Step 1: Download the RTC SDK. After decompressing, copy the *.jar and *.so from agora_sdk_java (for RTC) the lib/ of this project.
+- Step 1: Download the RTC SDK. After decompressing, copy the libagora_rtc_sdk.so from agora_sdk_java for RTC and libagora_rtm_sdk.so for RTM to the lib/ of this project.
 - Step 2: Install the dependency jar package which demo required into maven local repo, use maven commands:
 mvn install:install-file -Dfile=lib/agora_rtc.jar -DgroupId=io.agora.rtc  -DartifactId=agora-rtc-sdk -Dversion=1.0 -Dpackaging=jar
 mvn install:install-file -Dfile=lib/commons-cli-1.4.jar -DgroupId=io.agora.commons-cli -DartifactId=commons-cli -Dversion=1.4 -Dpackaging=jar
 mvn install:install-file -Dfile=lib/agora_rtm.jar -DgroupId=io.agora.rtm  -DartifactId=agora-rtm-sdk -Dversion=1.0 -Dpackaging=jar
 
 - Step 3: Compile and pack the project to *.jar, use "mvn package" under the directory where pom.xml locates. It may take some time to generate the package.
-- Step 4: Run the demo， use 
-java -cp target/SampleReceiveYuvPcm-1.0-SNAPSHOT.jar -Dsun.boot.library.path=lib/ io.agora.mainClass.SampleReceiveYuvPcm -channelId your-channelid -token your-token(or App ID) 
+- Step 4: run this command once: export LD_LIBRARY_PATH=./lib Run the demo，use
+java -cp target/SampleReceiveYuvPcm-1.0-SNAPSHOT.jar -Dsun.boot.library.path=lib/ io.agora.mainClass.SampleReceiveYuvPcm -channelId your-channelid -token your-token(or App ID) [-remmoteUserId xxx]
 
-^Z to terminate
+^C or ^Z to terminate
 
 ## Parameters
 * **--token ：** user specific AppId or token, no default value, required
