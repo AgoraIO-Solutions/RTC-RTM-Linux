@@ -80,9 +80,9 @@ public class RtmJavaDemo {
     private boolean loginStatus = false;
     private Scanner scn;
 
-    public void init() {
+    public void init(String AppId) {
         try {
-            mRtmClient = RtmClient.createInstance(APPID.APP_ID,
+            mRtmClient = RtmClient.createInstance(AppId,
                             new RtmClientListener() {
                 @Override
                 public void onConnectionStateChanged(int state, int reason) {
@@ -277,7 +277,7 @@ public class RtmJavaDemo {
 
     public static void main(String[] args) {
         RtmJavaDemo client_ = new RtmJavaDemo();
-        client_.init();
+        client_.init(APPID.APP_ID);
         while(true) {
             if (!client_.loginStatus) {
                 if (!client_.login())

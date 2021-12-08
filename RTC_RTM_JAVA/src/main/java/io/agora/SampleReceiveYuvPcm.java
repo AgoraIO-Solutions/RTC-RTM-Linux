@@ -45,12 +45,18 @@ import common.SampleLocalUserObserver;
 
 import rtm.RtmJavaDemo;
 
+class RTM_USER_INFO{
+    public static String remoteRTMUserId = "123";
+    public static String localRTMUserId = "987";
+}
+
 public class SampleReceiveYuvPcm {
 
     public static int CLIENT_ROLE_BROADCASTER = 1;
     public static int CLIENT_ROLE_AUDIENCE = 2;
 
     public static int exitFlag = 0;
+    public static RtmJavaDemo rtmClient_ = new RtmJavaDemo();
 
     public static void main(String[] args) throws Exception {
         System.out.printf("SampleReceiveYuvPcm main begin\n");
@@ -60,6 +66,7 @@ public class SampleReceiveYuvPcm {
         String channelId = "";
         String userId = "";
         String remoteUserId = "";
+        String remoteRTMuserId = "";
         String streamType = "high";
         String audioFile = "received_audio.pcm";
         int sampleRate = 48000;
@@ -74,6 +81,7 @@ public class SampleReceiveYuvPcm {
         options.addOption("sampleRate", true, "[optional] Sample rate for received audio");
         options.addOption("numOfChannels", true, "[optional] Number of channels for received audio");
         options.addOption("remoteUserId", true, "[optional] remote user Id to subscribe to receive audio stream");
+        options.addOption("remoteRTMUserId", true, "[optional] remote RTM user Id to do peer to peer messaging");
         try {
             CommandLine commandLine = parser.parse( options, args );
             if (args.length <= 1) {
@@ -89,6 +97,7 @@ public class SampleReceiveYuvPcm {
                 System.out.println();
                 return;
             }
+
             appId = commandLine.getOptionValue("token");
 
             if(!commandLine.hasOption("channelId")) {
@@ -109,6 +118,10 @@ public class SampleReceiveYuvPcm {
 
             if(commandLine.hasOption("remoteUserId")) {
                 remoteUserId = commandLine.getOptionValue("remoteUserId");
+            }
+
+            if(commandLine.hasOption("remoteRTMUserId")) {
+                RTM_USER_INFO.remoteRTMUserId = commandLine.getOptionValue("remoteRTMUserId");
             }		
         }
         catch(ParseException exp) {
@@ -131,13 +144,13 @@ public class SampleReceiveYuvPcm {
         }
 
         // connect Agora RTM
-        RtmJavaDemo rtmClient_ = new RtmJavaDemo();
-        rtmClient_.init();
+        //RtmJavaDemo rtmClient_ = new RtmJavaDemo();
+        rtmClient_.init(appId);
         rtmClient_.login();
 
-        if (!remoteUserId.isEmpty()) {
-            System.out.println("p2p chat with destination ID:" + remoteUserId);
-	    rtmClient_.p2pChat(remoteUserId);
+        if (!RTM_USER_INFO.remoteRTMUserId.isEmpty()) {
+            System.out.println("p2p chat with destination ID:" + RTM_USER_INFO.remoteRTMUserId);
+	    rtmClient_.p2pChat(RTM_USER_INFO.remoteRTMUserId);
 	}
 
         // Create Agora connection
@@ -236,7 +249,7 @@ public class SampleReceiveYuvPcm {
 	    long localts = audioFrame.getRenderTimeMs();
             if ((frameNum_++ & 0xff) == 0) {
 		System.out.println(" QConPlaybackAudioFrame frame number:" + frameNum_);
-	        //rtmClient_.p2pChat(remoteUserId);
+	        rtmClient_.p2pChat(RTM_USER_INFO.remoteRTMUserId);
 		//System.out.format(" time: %d%n", localts);
 	    }    
             if (audioFrame == null) {
