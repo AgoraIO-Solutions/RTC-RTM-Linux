@@ -185,7 +185,7 @@ public class SampleReceiveYuvPcm {
         conn.registerObserver(new SampleConnectionObserver());
 
         SampleLocalUserObserver localUserObserver = new SampleLocalUserObserver(localUser);
-        PcmFrameObserver pcmFrameObserver = new PcmFrameObserver(audioFile);
+        PcmFrameObserver pcmFrameObserver = new PcmFrameObserver(audioFile, channelId);
         ret = localUser.setPlaybackAudioFrameParameters(numOfChannels, sampleRate);
         if (ret != 0) {
             System.out.printf("setPlaybackAudioFrameBeforeMixingParameters fail ret=%d\n", ret);
@@ -230,13 +230,14 @@ public class SampleReceiveYuvPcm {
     }
 
     public static class PcmFrameObserver extends DefaultAudioFrameObserver {
-        public PcmFrameObserver(String outputFilePath) {
+        public PcmFrameObserver(String outputFilePath, String channelId) {
             outputFilePath_ = outputFilePath;
             pcmFile_ = null;
             channel_ = null;
             fileCount = 0;
             fileSize_ = 0;
 	    frameNum_ = 0;
+	    channelId_ = channelId;
         }
 
         @Override
@@ -248,7 +249,7 @@ public class SampleReceiveYuvPcm {
         public int onPlaybackAudioFrame(AgoraLocalUser agora_local_user, AudioFrame audioFrame) {
 	    long localts = audioFrame.getRenderTimeMs();
             if ((frameNum_++ & 0xff) == 0) {
-		System.out.println(" QConPlaybackAudioFrame frame number:" + frameNum_);
+		System.out.println(" QConPlaybackAudioFrame frame number:" + frameNum_ + "from channel " + channelId_);
 	        rtmClient_.p2pChat(RTM_USER_INFO.remoteRTMUserId);
 		//System.out.format(" time: %d%n", localts);
 	    }    
@@ -330,6 +331,7 @@ public class SampleReceiveYuvPcm {
         int fileCount;
         int fileSize_;
         int frameNum_;;
+	private String channelId_; 
     }
 
     static class SampleSignalHandler implements SignalHandler
