@@ -24,7 +24,8 @@ public class SampleLocalUserObserver extends DefaultLocalUserObserver {
         }
         audioFrameObserver_ = null;
     }
-    
+
+    int ret = 0;
     private AgoraLocalUser localUser_;
     private IAudioFrameObserver audioFrameObserver_;
 }

@@ -21,6 +21,9 @@ mvn install:install-file -Dfile=lib/commons-cli-1.4.jar -DgroupId=io.agora.commo
 - Step 4: Run the demo， use 
 java -cp target/SampleReceiveYuvPcm-1.0-SNAPSHOT.jar -Dsun.boot.library.path=lib/ io.agora.mainClass.SampleReceiveYuvPcm -channelId your-channelid -token your-token(or App ID) 
 
+Note:
+you may need to run export LD_LIBRARY_PATH=./lib 
+
 ## Parameters
 * **--token ：** user specific AppId or token, no default value, required
 * **--channelId ：** channel name, no default value, required
