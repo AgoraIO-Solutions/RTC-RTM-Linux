@@ -36,7 +36,7 @@ public class SampleConnectionObserver extends DefaultRtcConnObserver {
                 return;
             }
         }
-        AccountInfo accountInfo = agora_rtc_conn.getUserInfoByUserAccount("userid123");
+        AccountInfo accountInfo = agora_rtc_conn.getUserInfoByUserAccount(user_id);
         System.out.println(
                 "conn.getUserInfo111 uid->" + accountInfo.getUid() + " UserAccount->" + accountInfo.getUserAccount());
     }

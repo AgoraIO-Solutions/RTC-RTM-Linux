@@ -163,18 +163,10 @@ public class SampleReceiveYuvPcm {
 
         // Subcribe streams from all remote users or specific remote user
         AgoraLocalUser localUser = conn.getLocalUser();
-/*	
-	if (remoteUserId.isEmpty()) {
-            System.out.printf("Subscribe streams from all remote users");
-            localUser.subscribeAllAudio();
-        } else {
-            localUser.subscribeAudio(remoteUserId);
-        }
-*/
         conn.registerObserver(new SampleConnectionObserver(localUser, remoteUserId));
 
         SampleLocalUserObserver localUserObserver = new SampleLocalUserObserver(localUser);
-        PcmFrameObserver pcmFrameObserver = new PcmFrameObserver(audioFile);
+        PcmFrameObserver pcmFrameObserver = new PcmFrameObserver(conn, audioFile);
         ret = localUser.setPlaybackAudioFrameBeforeMixingParameters(numOfChannels, sampleRate);
         if (ret != 0) {
             System.out.printf("setPlaybackAudioFrameBeforeMixingParameters fail ret=%d\n", ret);
@@ -196,18 +188,10 @@ public class SampleReceiveYuvPcm {
 
         // Subcribe streams from all remote users or specific remote user
         AgoraLocalUser localUser1 = conn1.getLocalUser();
-/*
-        if (remoteUserId1.isEmpty()) {
-            System.out.printf("Subscribe streams from all remote users");
-            localUser1.subscribeAllAudio();
-        } else {
-            localUser1.subscribeAudio(remoteUserId);
-        }
-*/
         conn1.registerObserver(new SampleConnectionObserver(localUser1, remoteUserId1));
 
         SampleLocalUserObserver localUserObserver1 = new SampleLocalUserObserver(localUser1);
-        PcmFrameObserver pcmFrameObserver1 = new PcmFrameObserver(audioFile1);
+        PcmFrameObserver pcmFrameObserver1 = new PcmFrameObserver(conn1, audioFile1);
         ret = localUser1.setPlaybackAudioFrameBeforeMixingParameters(numOfChannels, sampleRate);
         if (ret != 0) {
             System.out.printf("setPlaybackAudioFrameBeforeMixingParameters fail ret=%d\n", ret);
@@ -251,12 +235,14 @@ public class SampleReceiveYuvPcm {
     }
 
     public static class PcmFrameObserver extends DefaultAudioFrameObserver {
-        public PcmFrameObserver(String outputFilePath) {
+        public PcmFrameObserver(AgoraRtcConn agora_rtc_conn, String outputFilePath) {
+	    rtc_conn_ = agora_rtc_conn;
             outputFilePath_ = outputFilePath;
             pcmFile_ = null;
             channel_ = null;
             fileCount = 0;
             fileSize_ = 0;
+	    AccountInfo userAccountInfo_;
         }
 
         @Override
@@ -279,9 +265,10 @@ public class SampleReceiveYuvPcm {
 
         @Override
         public int onPlaybackAudioFrameBeforeMixing(AgoraLocalUser agora_local_user, int uid, AudioFrame audioFrame) {
+	    userAccountInfo_ = rtc_conn_.getUserInfoByUid(uid);
             System.out.println(
                     "onPlaybackAudioFrameBeforeMixing" + outputFilePath_ + "channel->" + channel_ + "uid->" + uid
-                            + " audioFrame->" + audioFrame);
+                            + " audioFrame->" + audioFrame + "stringUID: " + userAccountInfo_.getUserAccount());
             // Create new file to save received PCM samples
             if (pcmFile_ == null) {
                 String fileName = (++fileCount > 1)
@@ -318,11 +305,13 @@ public class SampleReceiveYuvPcm {
             return 1;
         }
 
+	private AgoraRtcConn rtc_conn_;
         private String outputFilePath_;
         private FileOutputStream pcmFile_;
         private WritableByteChannel channel_;
         int fileCount;
         int fileSize_;
+	AccountInfo userAccountInfo_;
     }
 
     static class SampleSignalHandler implements SignalHandler {
