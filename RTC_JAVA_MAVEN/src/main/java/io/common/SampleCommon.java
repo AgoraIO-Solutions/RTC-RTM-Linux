@@ -3,6 +3,8 @@ package common;
 import io.agora.rtc.AgoraService;
 import io.agora.rtc.AgoraServiceConfig;
 import io.agora.rtc.SDK;
+import io.agora.rtc.AgoraRtcConn;
+import io.agora.rtc.AgoraParameter;
 
 public class SampleCommon {
 
@@ -32,5 +34,18 @@ public class SampleCommon {
         }
 
         return service;
+    }
+
+    public static int setCloudProxy(AgoraRtcConn agora_rtc_conn, String proxyOn){
+	    AgoraParameter agoraParameter = agora_rtc_conn.getAgoraParameter();
+	    if (proxyOn == "true") {
+              agoraParameter.setParameters("{\"rtc.enable_proxy\":true}");
+              System.out.printf("setCloudProxy to true.\n");
+            }
+            else {
+              agoraParameter.setParameters("{\"rtc.enable_proxy\":false}");
+              System.out.printf("setCloudProxy to false.\n");
+            }
+            return (0);
     }
 }

@@ -60,13 +60,14 @@ public class SampleReceiveYuvPcm {
         String appId = "";
         String channelId = "";
         String channelId1 = "";
-        String userId = "fffff";
+        String userId = "bot";
         String remoteUserId = "";
         String remoteUserId1 = "";
         String streamType = "high";
         String audioFile = "received_audio.pcm";
         String audioFile1 = "received_audio1.pcm";
         String videoFile = "received_video.yuv";
+	String proxyOn= "true";
         int sampleRate = 48000;
         int numOfChannels = 1;
         int ret = 0;
@@ -161,6 +162,9 @@ public class SampleReceiveYuvPcm {
             return;
         }
 
+	// enable cloud proxy
+        SampleCommon.setCloudProxy(conn, proxyOn);
+
         // Subcribe streams from all remote users or specific remote user
         AgoraLocalUser localUser = conn.getLocalUser();
         conn.registerObserver(new SampleConnectionObserver(localUser, remoteUserId));
@@ -185,6 +189,9 @@ public class SampleReceiveYuvPcm {
             System.out.printf("AgoraService.agoraRtcConnCreate fail\n");
             return;
         }
+
+	// enable cloud proxy
+        SampleCommon.setCloudProxy(conn1, proxyOn);
 
         // Subcribe streams from all remote users or specific remote user
         AgoraLocalUser localUser1 = conn1.getLocalUser();
@@ -220,6 +227,10 @@ public class SampleReceiveYuvPcm {
             System.out.printf("conn.disconnect fail ret=%d\n", ret);
         }
         System.out.printf("Disconnected from Agora channel successfully\n");
+	// disable cloud proxy
+	proxyOn = "false";
+        SampleCommon.setCloudProxy(conn, proxyOn);
+
         conn.destroy();
 
         // Disconnect from Agora channel
@@ -228,6 +239,9 @@ public class SampleReceiveYuvPcm {
             System.out.printf("conn1.disconnect fail ret=%d\n", ret);
         }
         System.out.printf("Disconnected from Agora channel1 successfully\n");
+	// disable cloud proxy
+        SampleCommon.setCloudProxy(conn1, proxyOn);
+
         conn1.destroy();
 
         // Destroy Agora Service
