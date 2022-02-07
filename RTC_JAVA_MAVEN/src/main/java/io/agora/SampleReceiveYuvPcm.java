@@ -136,7 +136,7 @@ public class SampleReceiveYuvPcm {
         SampleSignalHandler.listenTo("INT");
 
         // Create Agora service
-        AgoraService service = SampleCommon.createAndInitAgoraService(0, 1, 1);
+        AgoraService service = SampleCommon.createAndInitAgoraService(0, 1, 1, appId);
         if (null == service) {
             System.out.printf("createAndInitAgoraService fail\n");
             return;

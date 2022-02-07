@@ -12,7 +12,7 @@ public class SampleCommon {
     public static int DEFAULT_LOG_SIZE = 512 * 1024; // default log size is 512 kb
 
     public static AgoraService createAndInitAgoraService(int enableAudioDevice, int enableAudioProcessor,
-            int enableVideo) {
+            int enableVideo, String appId) {
         SDK.load(); // ensure JNI library load
         AgoraService service = new AgoraService();
         AgoraServiceConfig config = new AgoraServiceConfig();
@@ -20,6 +20,7 @@ public class SampleCommon {
         config.setEnableAudioProcessor(enableAudioProcessor);
         config.setEnableVideo(enableVideo);
         config.setUseStringUid(1);
+	config.setAppId(appId);
         int ret = service.initialize(config);
         if (ret != 0) {
             System.out.printf("createAndInitAgoraService AgoraService.initialize fail ret=%d\n", ret);
