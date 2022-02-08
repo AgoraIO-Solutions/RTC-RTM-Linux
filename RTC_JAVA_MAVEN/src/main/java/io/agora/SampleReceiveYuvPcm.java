@@ -58,6 +58,8 @@ public class SampleReceiveYuvPcm {
 
         // options
         String appId = "";
+        String token = "";
+        String token1 = "";
         String channelId = "";
         String channelId1 = "";
         String userId = "bot";
@@ -75,7 +77,9 @@ public class SampleReceiveYuvPcm {
         // Command Line Parser
         CommandLineParser parser = new BasicParser();
         Options options = new Options();
-        options.addOption("token", true, "[must] The token for authentication");
+        options.addOption("appId", true, "[must] The appId");
+        options.addOption("token", true, "[must] The token for first channel's authentication");
+        options.addOption("token1", true, "[must] The token for 2nd channel's authentication");
         options.addOption("channelId", true, "[must] Channel Id");
         options.addOption("channelId1", true, "[must] Channel Id1");
         options.addOption("sampleRate", true, "[optional] Sample rate for received audio");
@@ -89,13 +93,29 @@ public class SampleReceiveYuvPcm {
                 return;
             }
 
+            if (!commandLine.hasOption("appId")) {
+                HelpFormatter formatter = new HelpFormatter();
+                formatter.printHelp("SampleReceiveYuvPcm", options);
+                System.out.println();
+                return;
+            }
+            appId = commandLine.getOptionValue("appId");
+
             if (!commandLine.hasOption("token")) {
                 HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("SampleReceiveYuvPcm", options);
                 System.out.println();
                 return;
             }
-            appId = commandLine.getOptionValue("token");
+            token = commandLine.getOptionValue("token");
+
+            if (!commandLine.hasOption("token1")) {
+                HelpFormatter formatter = new HelpFormatter();
+                formatter.printHelp("SampleReceiveYuvPcm", options);
+                System.out.println();
+                return;
+            }
+            token1 = commandLine.getOptionValue("token1");
 
             if (!commandLine.hasOption("channelId")) {
                 HelpFormatter formatter = new HelpFormatter();
@@ -162,7 +182,7 @@ public class SampleReceiveYuvPcm {
             return;
         }
 
-	// enable cloud proxy
+	// enable cloud proxy, only need to do once for all connections. 
         SampleCommon.setCloudProxy(conn, proxyOn);
 
         // Subcribe streams from all remote users or specific remote user
@@ -182,16 +202,13 @@ public class SampleReceiveYuvPcm {
         localUserObserver.setAudioFrameObserver(pcmFrameObserver);
 
         // Connect to Agora channel
-        conn.connect(appId, channelId, userId);
+        conn.connect(token, channelId, userId);
 
         AgoraRtcConn conn1 = service.agoraRtcConnCreate(ccfg);
         if (conn1 == null) {
             System.out.printf("AgoraService.agoraRtcConnCreate fail\n");
             return;
         }
-
-	// enable cloud proxy
-        SampleCommon.setCloudProxy(conn1, proxyOn);
 
         // Subcribe streams from all remote users or specific remote user
         AgoraLocalUser localUser1 = conn1.getLocalUser();
@@ -210,7 +227,7 @@ public class SampleReceiveYuvPcm {
         localUserObserver1.setAudioFrameObserver(pcmFrameObserver1);
 
         // Connect to Agora channel
-        conn1.connect(appId, channelId1, userId);
+        conn1.connect(token1, channelId1, userId);
 
         // Periodically check exit flag
         while (0 == exitFlag) {
@@ -227,9 +244,6 @@ public class SampleReceiveYuvPcm {
             System.out.printf("conn.disconnect fail ret=%d\n", ret);
         }
         System.out.printf("Disconnected from Agora channel successfully\n");
-	// disable cloud proxy
-	proxyOn = "false";
-        SampleCommon.setCloudProxy(conn, proxyOn);
 
         conn.destroy();
 

@@ -40,7 +40,8 @@ public class SampleCommon {
     public static int setCloudProxy(AgoraRtcConn agora_rtc_conn, String proxyOn){
 	    AgoraParameter agoraParameter = agora_rtc_conn.getAgoraParameter();
 	    if (proxyOn == "true") {
-              agoraParameter.setParameters("{\"rtc.proxy_server\":[2, \"[\\\"128.1.77.34\\\", \\\"128.1.78.146\\\"]\", 0], \"rtc.enable_proxy\":true}");
+	      //agoraParameter.setParameters("{\"rtc.proxy_server\":[2, \"[\\\"128.1.77.34\\\", \\\"128.1.78.146\\\"]\", 0], \"rtc.enable_proxy\":true}");  // from RTSA doc in Chinese
+              agoraParameter.setParameters("{\"rtc.proxy_server\":[2, \"[\\\"184.72.16.87\\\", \\\"35.168.106.53\\\"]\", 0], \"rtc.enable_proxy\":true}");
               System.out.printf("setCloudProxy to true.\n");
             }
             else {
