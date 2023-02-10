@@ -28,6 +28,7 @@ public class SampleCommon {
         }
 
         System.out.printf("createAndInitAgoraService created log file at %s\n", DEFAULT_LOG_PATH);
+        ret = service.setLogFilter(1);
         ret = service.setLogFile(DEFAULT_LOG_PATH, DEFAULT_LOG_SIZE);
         if (ret != 0) {
             System.out.printf("createAndInitAgoraService AgoraService.setLogFile fail ret=%d\n", ret);
@@ -38,15 +39,18 @@ public class SampleCommon {
     }
 
     public static int setCloudProxy(AgoraRtcConn agora_rtc_conn, String proxyOn){
+            System.out.printf("setting proxy with %s\n", proxyOn);
 	    AgoraParameter agoraParameter = agora_rtc_conn.getAgoraParameter();
-	    if (proxyOn == "true") {
+	    if (proxyOn.equals("true")) {
 	      //agoraParameter.setParameters("{\"rtc.proxy_server\":[2, \"[\\\"128.1.77.34\\\", \\\"128.1.78.146\\\"]\", 0], \"rtc.enable_proxy\":true}");  // from RTSA doc in Chinese
-              agoraParameter.setParameters("{\"rtc.proxy_server\":[2, \"[\\\"184.72.16.87\\\", \\\"35.168.106.53\\\"]\", 0], \"rtc.enable_proxy\":true}");
-              System.out.printf("setCloudProxy to true.\n");
+              //agoraParameter.setParameters("{\"rtc.proxy_server\":[2, \"[\\\"184.72.16.87\\\", \\\"35.168.106.53\\\"]\", 0], \"rtc.enable_proxy\":true}");
+	      //agoraParameter.setParameters("{\"rtc.proxy_server\":[2,\"\",0]}"); //setting mode w/o IPs does not work. don't use it
+              agoraParameter.setParameters("{\"rtc.enable_proxy\":true}");
+              System.out.printf("Enable Cloud Proxy.\n");
             }
             else {
               agoraParameter.setParameters("{\"rtc.enable_proxy\":false}");
-              System.out.printf("setCloudProxy to false.\n");
+              System.out.printf("Disable Cloud Proxy.\n");
             }
             return (0);
     }

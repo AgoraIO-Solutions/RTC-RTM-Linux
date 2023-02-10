@@ -69,7 +69,7 @@ public class SampleReceiveYuvPcm {
         String audioFile = "received_audio.pcm";
         String audioFile1 = "received_audio1.pcm";
         String videoFile = "received_video.yuv";
-	String proxyOn= "true";
+	String proxyOn= "false";
         int sampleRate = 48000;
         int numOfChannels = 1;
         int ret = 0;
@@ -82,6 +82,7 @@ public class SampleReceiveYuvPcm {
         options.addOption("token1", true, "[must] The token for 2nd channel's authentication");
         options.addOption("channelId", true, "[must] Channel Id");
         options.addOption("channelId1", true, "[must] Channel Id1");
+        options.addOption("proxyOn", true, "[optional] enable proxy: true or false");
         options.addOption("sampleRate", true, "[optional] Sample rate for received audio");
         options.addOption("numOfChannels", true, "[optional] Number of channels for received audio");
         try {
@@ -117,6 +118,7 @@ public class SampleReceiveYuvPcm {
             }
             token1 = commandLine.getOptionValue("token1");
 
+
             if (!commandLine.hasOption("channelId")) {
                 HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("SampleReceiveYuvPcm", options);
@@ -132,6 +134,11 @@ public class SampleReceiveYuvPcm {
                 return;
             }
             channelId1 = commandLine.getOptionValue("channelId1");
+
+            if (commandLine.hasOption("proxyOn")) {
+                proxyOn = commandLine.getOptionValue("proxyOn");
+                System.out.printf("proxy setting: %s\n", proxyOn);
+            }
 
             if (commandLine.hasOption("sampleRate")) {
                 sampleRate = Integer.parseInt(commandLine.getOptionValue("sampleRate"));
@@ -254,7 +261,7 @@ public class SampleReceiveYuvPcm {
         }
         System.out.printf("Disconnected from Agora channel1 successfully\n");
 	// disable cloud proxy
-        SampleCommon.setCloudProxy(conn1, proxyOn);
+        SampleCommon.setCloudProxy(conn1, "false");
 
         conn1.destroy();
 
