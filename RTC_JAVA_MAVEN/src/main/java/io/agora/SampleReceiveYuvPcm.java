@@ -43,6 +43,7 @@ import common.SampleConnectionObserver;
 import common.SampleLocalUserObserver;
 
 public class SampleReceiveYuvPcm {
+    public static final boolean secondChannel = true;
 
     public static int CLIENT_ROLE_BROADCASTER = 1;
     public static int CLIENT_ROLE_AUDIENCE = 2;
@@ -79,9 +80,14 @@ public class SampleReceiveYuvPcm {
         Options options = new Options();
         options.addOption("appId", true, "[must] The appId");
         options.addOption("token", true, "[must] The token for first channel's authentication");
-        options.addOption("token1", true, "[must] The token for 2nd channel's authentication");
         options.addOption("channelId", true, "[must] Channel Id");
-        options.addOption("channelId1", true, "[must] Channel Id1");
+	if (secondChannel) {
+          options.addOption("token1", true, "[must] The token for 2nd channel's authentication");
+          options.addOption("channelId1", true, "[must] Channel Id1");
+        } else {
+          options.addOption("token1", true, "[optional] The token for 2nd channel's authentication");
+          options.addOption("channelId1", true, "[optional] Channel Id1");
+        }
         options.addOption("proxyOn", true, "[optional] enable proxy: true or false");
         options.addOption("sampleRate", true, "[optional] Sample rate for received audio");
         options.addOption("numOfChannels", true, "[optional] Number of channels for received audio");
@@ -110,15 +116,6 @@ public class SampleReceiveYuvPcm {
             }
             token = commandLine.getOptionValue("token");
 
-            if (!commandLine.hasOption("token1")) {
-                HelpFormatter formatter = new HelpFormatter();
-                formatter.printHelp("SampleReceiveYuvPcm", options);
-                System.out.println();
-                return;
-            }
-            token1 = commandLine.getOptionValue("token1");
-
-
             if (!commandLine.hasOption("channelId")) {
                 HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("SampleReceiveYuvPcm", options);
@@ -127,13 +124,24 @@ public class SampleReceiveYuvPcm {
             }
             channelId = commandLine.getOptionValue("channelId");
 
-            if (!commandLine.hasOption("channelId1")) {
-                HelpFormatter formatter = new HelpFormatter();
-                formatter.printHelp("SampleReceiveYuvPcm", options);
-                System.out.println();
-                return;
-            }
-            channelId1 = commandLine.getOptionValue("channelId1");
+	    if (secondChannel) {
+              if (!commandLine.hasOption("token1")) {
+                  HelpFormatter formatter = new HelpFormatter();
+                  formatter.printHelp("SampleReceiveYuvPcm", options);
+                  System.out.println();
+                  return;
+              }
+              token1 = commandLine.getOptionValue("token1");
+
+
+              if (!commandLine.hasOption("channelId1")) {
+                  HelpFormatter formatter = new HelpFormatter();
+                  formatter.printHelp("SampleReceiveYuvPcm", options);
+                  System.out.println();
+                  return;
+              }
+              channelId1 = commandLine.getOptionValue("channelId1");
+	    }
 
             if (commandLine.hasOption("proxyOn")) {
                 proxyOn = commandLine.getOptionValue("proxyOn");
@@ -211,30 +219,34 @@ public class SampleReceiveYuvPcm {
         // Connect to Agora channel
         conn.connect(token, channelId, userId);
 
-        AgoraRtcConn conn1 = service.agoraRtcConnCreate(ccfg);
-        if (conn1 == null) {
-            System.out.printf("AgoraService.agoraRtcConnCreate fail\n");
-            return;
-        }
+	// set up and connect the 2nd channel
+        AgoraRtcConn conn1;
+        SampleLocalUserObserver localUserObserver1;
+        if (secondChannel) {
+          conn1 = service.agoraRtcConnCreate(ccfg);
+          if (conn1 == null) {
+              System.out.printf("AgoraService.agoraRtcConnCreate fail\n");
+              return;
+          }
 
-        // Subcribe streams from all remote users or specific remote user
-        AgoraLocalUser localUser1 = conn1.getLocalUser();
-        conn1.registerObserver(new SampleConnectionObserver(localUser1, remoteUserId1));
+          // Subcribe streams from all remote users or specific remote user
+          AgoraLocalUser localUser1 = conn1.getLocalUser();
+          conn1.registerObserver(new SampleConnectionObserver(localUser1, remoteUserId1));
 
-        SampleLocalUserObserver localUserObserver1 = new SampleLocalUserObserver(localUser1);
-        PcmFrameObserver pcmFrameObserver1 = new PcmFrameObserver(conn1, audioFile1);
-        ret = localUser1.setPlaybackAudioFrameBeforeMixingParameters(numOfChannels, sampleRate);
-        if (ret != 0) {
-            System.out.printf("setPlaybackAudioFrameBeforeMixingParameters fail ret=%d\n", ret);
-            return;
-        }
+          localUserObserver1 = new SampleLocalUserObserver(localUser1);
+          PcmFrameObserver pcmFrameObserver1 = new PcmFrameObserver(conn1, audioFile1);
+          ret = localUser1.setPlaybackAudioFrameBeforeMixingParameters(numOfChannels, sampleRate);
+          if (ret != 0) {
+              System.out.printf("setPlaybackAudioFrameBeforeMixingParameters fail ret=%d\n", ret);
+              return;
+          }
 
-        // NOTE: aware the order, without setPlaybackAudioFrameBeforeMixingParameters(),
-        // observer cannot be registered
-        localUserObserver1.setAudioFrameObserver(pcmFrameObserver1);
-
-        // Connect to Agora channel
-        conn1.connect(token1, channelId1, userId);
+          // NOTE: aware the order, without setPlaybackAudioFrameBeforeMixingParameters(),
+          // observer cannot be registered
+          localUserObserver1.setAudioFrameObserver(pcmFrameObserver1);
+          // Connect to Agora channel
+          conn1.connect(token1, channelId1, userId);
+        }  //endif 2nd channel
 
         // Periodically check exit flag
         while (0 == exitFlag) {
@@ -243,8 +255,9 @@ public class SampleReceiveYuvPcm {
 
         // Unregister audio & video frame observers
         localUserObserver.unsetAudioFrameObserver();
-        localUserObserver1.unsetAudioFrameObserver();
-
+        if (secondChannel) {
+          localUserObserver1.unsetAudioFrameObserver();
+        }
         // Disconnect from Agora channel
         ret = conn.disconnect();
         if (ret != 0) {
@@ -253,18 +266,19 @@ public class SampleReceiveYuvPcm {
         System.out.printf("Disconnected from Agora channel successfully\n");
 
         conn.destroy();
-
+        //2nd channel
+        if (secondChannel) {
         // Disconnect from Agora channel
-        ret = conn1.disconnect();
-        if (ret != 0) {
-            System.out.printf("conn1.disconnect fail ret=%d\n", ret);
-        }
-        System.out.printf("Disconnected from Agora channel1 successfully\n");
-	// disable cloud proxy
-        SampleCommon.setCloudProxy(conn1, "false");
+            ret = conn1.disconnect();
+          if (ret != 0) {
+              System.out.printf("conn1.disconnect fail ret=%d\n", ret);
+          }
+          System.out.printf("Disconnected from Agora channel1 successfully\n");
+	  // disable cloud proxy
+          SampleCommon.setCloudProxy(conn1, "false");
 
-        conn1.destroy();
-
+          conn1.destroy();
+	} //endif 2nd channel
         // Destroy Agora Service
         service.destroy();
     }
